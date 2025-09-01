@@ -6,12 +6,12 @@ export default class NewsItem extends Component {
     return (
         
       <div>
-        <div className="card my-3" style={{width: "18rem"}}>
-            <img src={imageUrl} className="card-img-top" alt="no-image-selected"/>
+        <div className="card my-3">
+            <img src={imageUrl} className="card-img-top" alt="no img"/>
             <div className="card-body">
                 <h5 className="card-title">{title}</h5>
                 <p className="card-text">{description}</p>
-                <a rel='noreferrer' href={newsUrl} target='_blank' className="btn btn-sm btn-secondary">Read More</a>
+                <a rel='noreferrer' href={newsUrl} target='_blank' className="btn btn-sm btn-primary">Read More</a>
             </div>
             </div>
       </div>
