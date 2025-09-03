@@ -15,19 +15,23 @@ export default class News extends Component {
         pageSize: PropTypes.number,
         category: PropTypes.string
     }
+    capitalizefirstletter = (string) =>{
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
 
-    constructor() { //special method used to initialize component's state and bind event handlers
-        super(); // insure to call the parent class constructor
+    constructor(props) { //special method used to initialize component's state and bind event handlers
+        super(props); // insure to call the parent class constructor
         // console.log("Hello I am a constructor from news component");
         this.state = {
             articles: [],
             loading: false,
             page: 1
         }
+        document.title = `${this.capitalizefirstletter(this.props.category)}- Headlines`
     }
 
-    async componentDidMount() { //lifecycle method jo component render hone k baad call hota hai
-        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=40ba6ef0291a442f9db8be68fad64c44&page=1&pageSize=${this.props.pageSize}`;
+    async updateNews(){
+        const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=40ba6ef0291a442f9db8be68fad64c44&page=${this.state.page}&pageSize=${this.props.pageSize}`;
         this.setState({loading: true});
         let data = await fetch(url); //fetching data from the url, fetch() returns a promise
         let parsedData = await data.json(); //converting the data into json format, json() also returns a promise
@@ -35,50 +39,33 @@ export default class News extends Component {
         this.setState({ articles: parsedData.articles,
              totalResults: parsedData.totalResults,
              loading: false
-             }) //updating the state with the fetched data 
+            }) //updating the state with the fetched data 
 
+    }
+
+    async componentDidMount() { //lifecycle method jo component render hone k baad call hota hai
+        this.updateNews();
 
     }
 
     handlePrevClick = async () => {
-        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=40ba6ef0291a442f9db8be68fad64c44&page=${this.state.page - 1}&pageSize=${this.props.pageSize}`;
-        this.setState({loading: true});
-        let data = await fetch(url);
-        let parsedData = await data.json();
-        console.log(parsedData);
-        this.setState({
-            page: this.state.page - 1,
-            articles: parsedData.articles,
-            loading: false
-        })
+        this.setState({page: this.state.page - 1});
+        this.updateNews();
     }
     handleNextClick = async () => {
-        if (this.state.page + 1 > Math.ceil(this.state.totalResults/this.props.pageSize)) {
-        }
-        else {
-
-            let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=40ba6ef0291a442f9db8be68fad64c44&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`;
-            this.setState({loading: true});
-            let data = await fetch(url);
-            let parsedData = await data.json();
-            console.log(parsedData);
-            this.setState({
-                page: this.state.page + 1,
-                articles: parsedData.articles,
-                loading: false
-            })
-        }
+        this.setState({page: this.state.page + 1});
+        this.updateNews();
     }
     render() {
 
         return (
             <div className='container my-3'>
-                <h1 className="text-center p-2 bg-danger text-black " style={{margin: '25px 0px'}}>SnapNews - Top Headlines</h1>
+                <h1 className="text-center p-2  text-black " style={{margin: '25px 0px'}}>SnapNews - Top {this.capitalizefirstletter(this.props.category)} Headlines</h1>
                 {this.state.loading && <Spinner/>}
                 <div className="row">
                     {!this.state.loading && this.state.articles.map((element) => { //map() highr order function that runs a function on every element of the array and returns a new array
                         return <div className="col-md-4" key={element.url}>
-                            <NewsItem title={element.title ? element.title : ""} description={element.description ? element.description : ""} imageUrl={element.urlToImage? element.urlToImage:"https://s.yimg.com/ny/api/res/1.2/uAN0SsD9f4WgV9P7…ar_mechanics_642/593ab0802c75668b28821326cdae6dbf"} newsUrl={element.url} />
+                            <NewsItem title={element.title ? element.title : ""} description={element.description ? element.description : ""} imageUrl={element.urlToImage? element.urlToImage:"https://ichef.bbci.co.uk/news/1024/branded_news/15d1/live/177c76f0-86b9-11f0-84c3-3f41d5d4c3e3.jpg"} newsUrl={element.url} time={element.publishedAt} source={element.source.name} author={element.author} />
                         </div>
                     })}
                 </div>
