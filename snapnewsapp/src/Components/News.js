@@ -74,7 +74,7 @@ export default class News extends Component {
         return(
             
                 <div className='container my-3'>
-                    <h1 className="text-center p-2 text-black " style={{ margin: '25px 0px' }}> SnapNews - Top {this.capitalizefirstletter(this.props.category)} Headlines</h1>
+                    <h1 className="text-center p-2 text-black " style={{ margin: '25px 0px', marginTop:'90px' }}> SnapNews - Top {this.capitalizefirstletter(this.props.category)} Headlines</h1>
                     {this.state.loading && <Spinner/>}
                     <InfiniteScroll
                         dataLength={this.state.articles.length}
